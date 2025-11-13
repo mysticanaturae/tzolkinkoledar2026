@@ -126,15 +126,56 @@ header h1 {
   display: block;
 }
 
-/* ------------------- APP GRID ------------------- */
+/* APP GRID */
 .app {
   display: grid;
-  grid-template-columns: 1fr 360px;
+  grid-template-columns: 1fr 360px; /* levi panel 1fr, desni 360px */
   gap: 24px;
   align-items: start;
   padding: 28px;
   max-width: 1400px;
   margin: 0 auto;
+}
+
+/* RIGHT PANEL */
+.right {
+  background: linear-gradient(180deg, rgba(249,253,249,0.9), rgba(239,247,237,0.95));
+  padding: 16px;
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(107,143,113,0.06);
+  min-width: 320px;       /* prepreči stiskanje pod levi panel */
+  justify-self: end;       /* ohrani panel na desni strani */
+}
+
+.right label {
+  display: block;
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 10px;
+}
+
+.right input[type=text],
+.right input[type=date],
+.right input[type=email],
+.right textarea {
+  width: 100%;
+  padding: 8px;
+  border-radius: 10px;
+  border: 1px solid rgba(8,50,26,0.06);
+  background: transparent;
+  color: var(--muted);
+}
+
+.right button.primary {
+  margin-top: 12px;
+  padding: 10px;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(90deg, var(--green), var(--accent));
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
 }
 
 /* ------------------- RESPONSIVE ------------------- */
@@ -145,12 +186,6 @@ header h1 {
 @media (max-width:768px){
   .preorder-panel { max-width:100%; margin-top:15px; }
 }
-  
-/* Right panel */
-.right{background:linear-gradient(180deg, rgba(249,253,249,0.9), rgba(239,247,237,0.95));padding:16px;border-radius:16px;box-shadow:var(--shadow);border:1px solid rgba(107,143,113,0.06)}
-label{display:block;font-size:13px;color:var(--muted);margin-top:10px}
-input[type=text],input[type=date],input[type=email],textarea{width:100%;padding:8px;border-radius:10px;border:1px solid rgba(8,50,26,0.06);background:transparent;color:var(--muted)}
-button.primary{margin-top:12px;padding:10px;border-radius:12px;border:none;background:linear-gradient(90deg,var(--green),var(--accent));color:#fff;font-weight:700;cursor:pointer}
 
 /* Kin cards */
 .kin-card{display:flex;gap:12px;align-items:center;margin-top:12px;background:linear-gradient(180deg,rgba(230,251,236,0.9),rgba(220,247,228,0.95));padding:10px;border-radius:10px;border:1px solid rgba(107,143,113,0.06)}
