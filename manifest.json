@@ -1,0 +1,21 @@
+{
+  "name": "Tzolkin Koledar 2026",
+  "short_name": "Tzolkin2026",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0b3d1a",
+  "theme_color": "#0b3d1a",
+  "description": "Tzolkin koledar za evolucijo zavesti 2026 z dnevno energijo, KIN in mesečnimi zanimivostmi.",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
