@@ -334,9 +334,9 @@ button.primary{margin-top:12px;padding:10px;border-radius:12px;border:none;backg
   </div>
 </div>
 
-  <div class="affirm">
+ <div class="affirm">
   <strong>Dnevna afirmacija / izziv</strong>
-  <div id="affirmText" style="margin-top:8px;color:var(--muted)">
+  <div id="dailyAffirmation" style="margin-top:8px;color:var(--muted)">
     Loading...
   </div>
 </div>
@@ -755,6 +755,35 @@ const dailyEnergySigns = {
   "Sprejemam tok življenja in uživam v vsakem trenutku."
 ];
 
+// Funkcija za naključno izbiro afirmacije
+function getRandomAffirmation() {
+  const idx = Math.floor(Math.random() * dailyAffirmations28.length);
+  return dailyAffirmations28[idx];
+}
+
+// Posodobi afirmacijo za določen dan
+function updateDailyAffirmation(dayObj) {
+  const affirmDiv = document.getElementById('affirmText');
+  if(!affirmDiv) return;
+
+  if(!dayObj){
+    // uporabi današnji datum, če ni podan
+    const today = new Date();
+    dayObj = yearData.find(d => 
+      d.date.getUTCFullYear() === today.getFullYear() &&
+      d.date.getUTCMonth() === today.getMonth() &&
+      d.date.getUTCDate() === today.getDate()
+    );
+  }
+
+  // 14. mesec - Sveti dan, lahko ima posebno afirmacijo
+  if(dayObj && dayObj.monthIndex === 14){
+    affirmDiv.textContent = "Sveti dan za refleksijo: čas za umiritev in povezavo z univerzumom.";
+  } else {
+    affirmDiv.textContent = getRandomAffirmation();
+  }
+}
+   
 document.addEventListener('DOMContentLoaded', () => {
 
   // ---------- TZOLKIN LOGIKA ----------
@@ -1015,7 +1044,7 @@ function openCalendarModal(dayObj) {
     });
   }
 
- // ---------- RENDER MONTH ----------
+// ---------- RENDER MONTH ----------
 function renderMonth(m){
   currentMonth = m;
   monthTitle.textContent = (m===14) ? `Mesec 14 — Sveti dan` : `Mesec ${m}`;
@@ -1033,25 +1062,31 @@ function renderMonth(m){
       empty.className='day empty';
       daysGrid.appendChild(empty);
     }
+
     const d = days[0];
     const cell=document.createElement('div');
     cell.className='day selected';
     cell.innerHTML = `<div class="greg">${d.date.getUTCDate()}.${d.date.getUTCMonth()+1}.</div>
                       <div class="tz">${d.num} ${tzSigns[d.signIdx].label}</div>
                       <div class="badge">Sveti dan</div>`;
+
     cell.addEventListener('click', ()=> {
       document.querySelectorAll('.day.selected').forEach(e=>e.classList.remove('selected'));
       cell.classList.add('selected');
       currentSelectedISO = d.iso;
       updateKinPanel(birthKIN, d.kin);
       openCalendarModal(d);
+      updateDailyAffirmation(d); // 🔹 dnevna afirmacija za izbran dan
     });
+
     daysGrid.appendChild(cell);
+
     for(let i=0;i<3;i++){
       const empty=document.createElement('div');
       empty.className='day empty';
       daysGrid.appendChild(empty);
     }
+
     loadMonthlyActivities(m);
     return;
   }
@@ -1067,22 +1102,24 @@ function renderMonth(m){
                         <div style="font-size:12px;margin-top:4px;">${d.num} ${tzSigns[d.signIdx].label}</div>
                       </div>`;
 
-    // Klik na celico odpre koledarski modal
+    // Klik na celico odpre koledarski modal in posodobi dnevno afirmacijo
     cell.addEventListener('click', ()=>{
       document.querySelectorAll('.day.selected').forEach(e=>e.classList.remove('selected'));
       cell.classList.add('selected');
       currentSelectedISO = d.iso;
       updateKinPanel(birthKIN, d.kin);
       openCalendarModal(d);
+      updateDailyAffirmation(d); // 🔹 dnevna afirmacija za izbran dan
     });
 
-    // Klik na sliko v koledarju odpre koledarski modal
+    // Klik na sliko v koledarju odpre koledarski modal in posodobi dnevno afirmacijo
     const img = cell.querySelector('img');
     img.addEventListener('click', ev=>{
       ev.stopPropagation(); // prepreči dvojno odpiranje
       currentSelectedISO = d.iso;
       updateKinPanel(birthKIN, d.kin);
-      openCalendarModal(d); // tukaj odpremo koledarski modal
+      openCalendarModal(d);
+      updateDailyAffirmation(d); // 🔹 dnevna afirmacija za izbran dan
     });
 
     daysGrid.appendChild(cell);
@@ -1090,8 +1127,8 @@ function renderMonth(m){
 
   loadMonthlyActivities(m);
 }
-  
-  // ---------- Posodobitev mesečne zanimivosti ----------
+
+// ---------- Posodobitev mesečne zanimivosti ----------
 function updateMonthlyFact(m) {
   const monthlyFactDiv = document.getElementById('monthlyFact');
   if(!monthlyFactDiv) return;
@@ -1101,6 +1138,56 @@ function updateMonthlyFact(m) {
     monthlyFactDiv.textContent = "Dodaj za vsak mesec eno zanimivost";
   }
 }
+
+// 🔹 Posodobitev dnevne afirmacije
+function updateDailyAffirmation(dayObj){
+  const affDiv = document.getElementById('dailyAffirmation');
+  if(!affDiv) return;
+
+  if(dayObj){
+    // po dnevu meseca: (dayObj.monthDay-1)%28
+    const idx = (dayObj.monthDay-1) % dailyAffirmations28.length;
+    affDiv.textContent = dailyAffirmations28[idx];
+  } else {
+    // če ni izbran dan, naključna
+    const idx = Math.floor(Math.random() * dailyAffirmations28.length);
+    affDiv.textContent = dailyAffirmations28[idx];
+  }
+}
+
+// ---------- MODALI ----------
+function openCalendarModal(dayObj){
+  if(!dayObj) return;
+  currentSelectedISO = dayObj.iso;
+  modalDate.textContent = dayObj.iso;
+  modalTz.textContent = `${dayObj.num} — ${tzSigns[dayObj.signIdx].label}`;
+  modalImg.src = tzolkinSignImages[dayObj.signIdx] || '';
+  modalDayEnergy.textContent = Object.values(dailyEnergyTexts[dayObj.num] || {}).join(', ');
+  dailyNotes.value = localStorage.getItem(`tzolkin_note_${dayObj.iso}`) || '';
+  modal.style.display = 'flex';
+}
+
+function closeCalendarModal(){
+  if(currentSelectedISO) localStorage.setItem(`tzolkin_note_${currentSelectedISO}`, dailyNotes.value);
+  modal.style.display = 'none';
+}
+
+function openDailyModal(content){
+  dailyModalContent.innerHTML = content || '';
+  dailyModal.style.display = 'flex';
+}
+
+function closeDailyModalFunc(){
+  dailyModal.style.display = 'none';
+}
+
+// Event listenerji
+closeModalBtn.addEventListener('click', closeCalendarModal);
+dailyModalClose.addEventListener('click', closeDailyModalFunc);
+
+// Klik na overlay za zapiranje
+modal.addEventListener('click', (e)=>{ if(e.target === modal) closeCalendarModal(); });
+dailyModal.addEventListener('click', (e)=>{ if(e.target === dailyModal) closeDailyModalFunc(); });
   
  // ---------- MODALI ----------
 function openCalendarModal(dayObj){
