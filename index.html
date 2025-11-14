@@ -1177,8 +1177,12 @@ function openDailyModal(content){
   dailyModal.style.display = 'flex';
 }
 
-function closeDailyModalFunc(){
-  dailyModal.style.display = 'none';
+function closeCalendarModal(){
+  if(currentSelectedISO) localStorage.setItem(`tzolkin_note_${currentSelectedISO}`, dailyNotes.value);
+  modal.style.display = 'none';
+
+  // 🔹 odstrani highlight iz celice
+  document.querySelectorAll('.day.selected').forEach(e => e.classList.remove('selected'));
 }
 
 // Event listenerji
