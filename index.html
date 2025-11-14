@@ -8,9 +8,6 @@
 <!-- Google Font -->
 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
 
-<!-- Manifest -->
-<link rel="manifest" href="manifest.json">
-
 <style>
 :root{
   --bg-light: #f6fbf6; --bg-deep:#072d16; --panel:#eaf7ea; --accent:#e07b2f; --green:#6fbf73; --mint:#bfe6c8; --muted:#577c63; --card-radius:14px; --shadow: 0 10px 30px rgba(4,20,12,0.12);
@@ -883,7 +880,9 @@ function openCalendarModal(dayObj) {
   // Event listener za desni stolpec (Dnevna Zavest)
   if(dailyImgElem && !dailyImgElem.dataset.listenerAdded){
     dailyImgElem.addEventListener('click', () => {
-      const dateToUse = currentSelectedISO ? new Date(currentSelectedISO+"T00:00:00Z") : new Date();
+      const dateToUse = currentSelectedISO 
+    ? new Date(currentSelectedISO + "T00:00:00Z") 
+    : new Date(Date.now() - (new Date().getTimezoneOffset()*60000)); // lokalni čas
       const dailyKIN = kinForDate(dateToUse);
       const combinedKIN = birthKIN_local ? ((birthKIN_local + dailyKIN) % 260) || 260 : dailyKIN;
       const combinedObj = kinObject(combinedKIN);
