@@ -267,12 +267,12 @@ button.primary{margin-top:12px;padding:10px;border-radius:12px;border:none;backg
   <div class="box">
     <strong>Mesečna zanimivost</strong>
     <div id="monthlyFact" style="margin-top:8px;color:var(--muted)">
-      Izberi mesec, da vidiš mesečno zanimivost.
+     Dodaj za vsak mesec eno zanimivost
     </div>
   </div>
 
   <div class="box">
-  <strong>Dnevne aktivnosti</strong>
+  <strong>Mesečne aktivnosti</strong>
   <textarea id="dailyActivities" placeholder="Zapiši svoje dejavnosti, misli, opomnike, sestanke, urnike..." style="height:108px"></textarea>
 </div>
 </div>
@@ -335,11 +335,11 @@ button.primary{margin-top:12px;padding:10px;border-radius:12px;border:none;backg
 </div>
 
   <div class="affirm">
-    <strong>Dnevna afirmacija / izziv</strong>
-    <div id="affirmText" style="margin-top:8px;color:var(--muted)">
-      Klikni na celico ali izračunaj svoj rojstni kin.
-    </div>
+  <strong>Dnevna afirmacija / izziv</strong>
+  <div id="affirmText" style="margin-top:8px;color:var(--muted)">
+    Loading...
   </div>
+</div>
 
   <div style="margin-top:12px">
     <strong>Barometri (kolektiv / individualno)</strong>
@@ -706,6 +706,54 @@ const dailyEnergySigns = {
   "Nevihta": {Fizično:"Preobrat in sprostitev", Mentalno:"Hitre odločitve", Čustveno:"Intenzivna čustva", Spiritualno:"Čiščenje energije"},
   "Sonce": {Fizično:"Vitalnost in energija", Mentalno:"Pozitivno razmišljanje", Čustveno:"Radost", Spiritualno:"Sijaj in kreativnost"}
 };
+   
+   const monthlyFacts = {
+    1: "Tzolkin je starodavna sveta matrika, ki je več kot tisoč let služila kot časovni zemljevid za civilizacije Srednje Amerike.",
+    2: "13+1 mesečni koledar ni le merjenje časa; je struktura, ki povezuje lunarne in sončne cikle z ritmi narave.",
+    3: "Tzolkin je več kot zgodovinska zapuščina – je svetlobna matrika, ki skriva skrivnosti preteklosti in prihodnosti.",
+    4: "Ta koledar omogoča povezavo s kolektivnim spominom človeštva, saj njegova struktura odraža večdimenzionalne cikle Zemlje in zvezd.",
+    5: "Uporaba Tzolkin koledarja odpira vrata k razumevanju ciklov narave in kozmičnih zakonov.",
+    6: "Tzolkin nas uči, da je čas plasten in večdimenzionalen.",
+    7: "Koledar 13+1 mesecev omogoča, da človek lažje uskladi osebne ritme z ritmi narave in neba.",
+    8: "Tzolkin je hkrati praktično orodje in skrivnostna matrika...",
+    9: "Vsak mesec 13+1 koledarja je v sebi nosilec kod in simbolov, ki povezujejo Zemljo s Plejadami.",
+    10: "S pomočjo Tzolkin koledarja lahko človek raziskuje čas kot holografsko matriko.",
+    11: "13+1 mesečni sistem omogoča preglednost in razumevanje ciklov, ki jih običajni koledarji ne zmorejo.",
+    12: "Tzolkin ni zgolj zapis dni, temveč svetlobna matrika, ki vsebuje informacije o harmoniji človeškega življenja.",
+    13: "Zadnji mesec koledarja je čas refleksije in povezovanja vseh ciklov.",
+    14: "Tzolkin je več kot 5000 let star in deluje, kot galaktična matrika časa."
+  };
+   
+   const dailyAffirmations28 = [
+  "Danes sprejemam vse, kar mi življenje prinaša, in zaupam svoji notranji modrosti.",
+  "Moja energija je usklajena z ritmi narave in vesolja.",
+  "Vsak korak, ki ga naredim, vodi k mojemu višjemu dobremu.",
+  "Sprejemam spremembe kot priložnost za rast.",
+  "Odpuščam sebi in drugim ter sproščam stare vzorce.",
+  "Moje misli, besede in dejanja ustvarjajo pozitivno resničnost.",
+  "Danes sem odprt/a za navdih in nove ideje.",
+  "V harmoniji sem s svojim telesom, umom in duhom.",
+  "Moje srce vodi moje odločitve in moje življenje.",
+  "Sprejemam obilje v vseh oblikah, ki prihaja k meni.",
+  "Povezan/a sem z univerzalno modrostjo in svojo notranjo svetlobo.",
+  "Vsak izziv je priložnost, da rastem in se razvijam.",
+  "Danes ustvarjam svoj svet zavestno in z namenom.",
+  "Moje energijsko polje je čisto, močno in usklajeno z vesoljem.",
+  "Zaupam svojemu notranjemu glasu in intuiciji.",
+  "Moja kreativnost in radost se izražata danes.",
+  "Sprejemam ljubezen in harmonijo v svojem življenju.",
+  "Vsak trenutek je priložnost za zavestno izbiro.",
+  "Sprejemam svoj notranji mir in ga delim z drugimi.",
+  "Danes sem močan/a, pogumen/a in samozavesten/a.",
+  "Moja duhovna rast se odvija z vsakim vdihom.",
+  "Hvaležen/a sem za vse lekcije in darove življenja.",
+  "Moja intuicija me vodi k pravim odločitvam.",
+  "Danes prepuščam nadzoru in zaupam življenju.",
+  "Moje srce in um sta odprta za obilje in ljubezen.",
+  "Vsak dan je nova priložnost za radost in svobodo.",
+  "Moje energijsko telo je polno svetlobe in harmonije.",
+  "Sprejemam tok življenja in uživam v vsakem trenutku."
+];
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -967,12 +1015,15 @@ function openCalendarModal(dayObj) {
     });
   }
 
-  // ---------- RENDER MONTH ----------
+ // ---------- RENDER MONTH ----------
 function renderMonth(m){
   currentMonth = m;
   monthTitle.textContent = (m===14) ? `Mesec 14 — Sveti dan` : `Mesec ${m}`;
-  daysGrid.innerHTML = '';
 
+  // 🔹 Posodobitev mesečne zanimivosti
+  updateMonthlyFact(m);
+
+  daysGrid.innerHTML = '';
   const days = yearData.filter(x => x.monthIndex===m);
 
   // Sveti dan
@@ -1038,6 +1089,17 @@ function renderMonth(m){
   });
 
   loadMonthlyActivities(m);
+}
+  
+  // ---------- Posodobitev mesečne zanimivosti ----------
+function updateMonthlyFact(m) {
+  const monthlyFactDiv = document.getElementById('monthlyFact');
+  if(!monthlyFactDiv) return;
+  if(monthlyFacts[m]){
+    monthlyFactDiv.textContent = monthlyFacts[m];
+  } else {
+    monthlyFactDiv.textContent = "Dodaj za vsak mesec eno zanimivost";
+  }
 }
   
  // ---------- MODALI ----------
