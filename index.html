@@ -590,47 +590,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let birthKIN = null;
   let currentSelectedISO = null;
 
-// ---------- AUTO-SAVE INPUTS & SAMODEJNI ROJSTNI KIN ----------
-const nameInput = document.getElementById("name");
-const birthInput = document.getElementById("birth");
-const emailInput = document.getElementById("email");
-const consentInput = document.getElementById("consent");
 
-// Naloži shranjene vrednosti
-if (localStorage.getItem("name")) nameInput.value = localStorage.getItem("name");
-if (localStorage.getItem("birth")) birthInput.value = localStorage.getItem("birth");
-if (localStorage.getItem("email")) emailInput.value = localStorage.getItem("email");
-if (localStorage.getItem("consent")) consentInput.checked = localStorage.getItem("consent") === "true";
-
-// Če je datum že shranjen, samodejno izračunaj rojstni KIN
-if (birthInput.value) {
-  const birthDate = new Date(birthInput.value + "T12:00:00");
-  birthKIN = kinForDate(new Date(Date.UTC(birthDate.getFullYear(), birthDate.getMonth(), birthDate.getDate())));
-
-  const now = new Date(); now.setHours(12,0,0,0);
-  const todayKIN = kinForDate(new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate())));
-
-  updateKinPanel(birthKIN, todayKIN);
-  updateBarometers(todayKIN, birthKIN);
-}
-
-// Shrani ob spremembi in osveži KIN/barometre
-nameInput.addEventListener("input", () => localStorage.setItem("name", nameInput.value));
-birthInput.addEventListener("change", () => {
-  localStorage.setItem("birth", birthInput.value);
-  if (birthInput.value) {
-    const birthDate = new Date(birthInput.value + "T12:00:00");
-    birthKIN = kinForDate(new Date(Date.UTC(birthDate.getFullYear(), birthDate.getMonth(), birthDate.getDate())));
-
-    const now = new Date(); now.setHours(12,0,0,0);
-    const todayKIN = kinForDate(new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate())));
-
-    updateKinPanel(birthKIN, todayKIN);
-    updateBarometers(todayKIN, birthKIN);
-  }
-});
-emailInput.addEventListener("input", () => localStorage.setItem("email", emailInput.value));
-consentInput.addEventListener("change", () => localStorage.setItem("consent", consentInput.checked));
 
   // ---------- HELPER ----------
   function noteKeyForDate(iso){ return `tzolkin_note_${iso}`; }
